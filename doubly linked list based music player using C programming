@@ -1,0 +1,109 @@
+#include <stdio.h>
+// Define a node in the doubly linked list
+typedef struct Node {
+char song[50];
+struct Node* prev;
+struct Node* next;
+} Node;
+// Function to create a new node
+Node* createNode(char* song) {
+Node* newNode = (Node*)malloc(sizeof(Node));
+strcpy(newNode->song, song);
+newNode->prev = NULL;
+newNode->next = NULL;
+return newNode;
+}
+// Function to add a song to the end of the playlist
+void addSong(Node** head, char* song) {
+Node* newNode = createNode(song);
+if (*head == NULL) {
+*head = newNode;
+return;
+}
+Node* temp = *head;
+while (temp->next != NULL) {
+temp = temp->next;
+}
+temp->next = newNode;
+newNode->prev = temp;
+}
+// Function to delete a song from the playlist
+void deleteSong(Node** head, char* song) {
+Node* temp = *head;
+while (temp != NULL &&strcmp(temp->song, song) != 0) {
+temp = temp->next;
+}
+if (temp == NULL) {
+printf("Song not found in the playlist.\n");
+return;
+}
+if (temp->prev != NULL) {
+temp->prev->next = temp->next;
+} else {
+*head = temp->next;
+}
+if (temp->next != NULL) {
+temp->next->prev = temp->prev;
+}
+free(temp);
+printf("Song deleted from the playlist.\n");
+}
+// Function to display the playlist
+void displayPlaylist(Node* head) {
+Node* temp = head;
+if (temp == NULL) {
+printf("Playlist is empty.\n");
+return;
+}
+while (temp != NULL) {
+printf("%s\n", temp->song);
+temp = temp->next;
+}
+}
+// Function to free the memory allocated for the playlist
+void freePlaylist(Node* head) {
+Node* temp;
+while (head != NULL) {
+temp = head;
+head = head->next;
+free(temp);
+}
+}
+int main() {
+Node* playlist = NULL;
+int choice;
+char song[50];
+while (1) {
+printf("\nMusic Playlist Menu:\n");
+printf("1. Add Song\n");
+printf("2. Delete Song\n");
+printf("3. Display Playlist\n");
+printf("4. Exit\n");
+printf("Enter your choice: ");
+scanf("%d", &choice);
+switch (choice) {
+case 1:
+printf("Enter song name: ");
+scanf(" %[^\n]s", song);
+addSong(&playlist, song);
+printf("The song has been added:");
+break;
+case 2:
+printf("Enter song name to delete: ");
+scanf(" %[^\n]s", song);
+deleteSong(&playlist, song);
+printf("The song has been deleted:");
+break;
+case 3:
+displayPlaylist(playlist);
+break;
+case 4:
+freePlaylist(playlist);
+printf("Exiting the program.\n");
+return 0;
+default:
+printf("Invalid choice. Please try again.\n");
+}
+}
+return 0;
+}
